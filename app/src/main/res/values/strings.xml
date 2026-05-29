@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Charapedia</string>
+
+    <string name="HomeScreen_Item_Title_Dbz">Personajes de Dragon Ball Z</string>
+    <string name="HomeScreen_Item_Title_Jba">Personajes de Jojo\'s Bizarre Adventure</string>
+    <string name="HomeScreen_Item_Title_Aot">Personajes de Attack on Titan</string>
+
+</resources>
