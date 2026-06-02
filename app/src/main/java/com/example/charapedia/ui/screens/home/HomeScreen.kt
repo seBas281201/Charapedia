@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,9 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.charapedia.R
 import com.example.charapedia.ui.Event
 import com.example.charapedia.ui.viewmodel.AnimeViewModel
@@ -43,10 +39,6 @@ fun HomeScreen(
     animeVm : AnimeViewModel = hiltViewModel(),
     goToCharacterDetail: (Int) -> Unit
 ) {
-
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.lottieloading)
-    )
 
     val stateCharacter by characterVm.state.collectAsState()
     val charactersDbz by characterVm.charactersDbz.collectAsState()
@@ -141,7 +133,6 @@ fun HomeScreen(
 
                     if(stateCharacter.isLoadingDbz || stateAnime.isLoadingDbz ){
                         SectionLoading(
-                            composition = composition,
                             iterations = LottieConstants.IterateForever
                         )
                     } else {
@@ -172,7 +163,6 @@ fun HomeScreen(
 
                     if(stateCharacter.isLoadingJba || stateAnime.isLoadingJba ){
                         SectionLoading(
-                            composition = composition,
                             iterations = LottieConstants.IterateForever
                         )
                     } else {
@@ -203,7 +193,6 @@ fun HomeScreen(
 
                     if(stateCharacter.isLoadingAot || stateAnime.isLoadingAot ){
                         SectionLoading(
-                            composition = composition,
                             iterations = LottieConstants.IterateForever
                         )
                     } else {
