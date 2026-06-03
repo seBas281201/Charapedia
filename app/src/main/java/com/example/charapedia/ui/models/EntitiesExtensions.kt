@@ -42,6 +42,16 @@ fun CharacterDetail.toUiModelDetail() : CharacterDetailUiModel{
     )
 }
 
+fun CharacterDetail.characterDetailToEntity() : CharacterDetailEntity{
+    return CharacterDetailEntity(
+        id = malId,
+        name = name,
+        imageUrl = images.webp.imageUrl,
+        nameKanji = nameKanji ?: "",
+        about = about
+    )
+}
+
 fun CharacterDetailEntity.entityToUiModelDetail() : CharacterDetailUiModel{
     return CharacterDetailUiModel(
         id = id,
