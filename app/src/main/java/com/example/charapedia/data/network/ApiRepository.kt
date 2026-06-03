@@ -1,97 +1,67 @@
 package com.example.charapedia.data.network
 
+import com.example.charapedia.data.local.dao.CharacterDAO
+import com.example.charapedia.data.network.response.characters.CharacterResponse
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
 import com.example.charapedia.ui.models.character.CharacterDetailUiModel
+import com.example.charapedia.ui.models.characterItemToEntity
 import com.example.charapedia.ui.models.characters.CharacterUiModel
-import com.example.charapedia.ui.models.toUiModel
+import com.example.charapedia.ui.models.entityToUiModel
 import com.example.charapedia.ui.models.toUiModelAnimeDetail
 import com.example.charapedia.ui.models.toUiModelDetail
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ApiRepository @Inject constructor(
-    private val apiClient: ApiClient
+    private val apiClient: ApiClient,
+    private val characterDAO: CharacterDAO
 ) {
 
-    suspend fun getCharactersDbz(): Result<List<CharacterUiModel>> {
-
-        return try {
-
-            val response = apiClient.getCharactersDbz()
-
-            if(response.isSuccessful) {
-
-                val characters = response
-                    .body()
-                    ?.data
-                    ?.map { it.toUiModel() }
-                    ?: emptyList()
-
-                Result.Success(characters)
-
-            } else {
-
-                Result.Error(
-                    "Error HTTP ${response.code()}"
-                )
-            }
-
-        } catch (e: Exception) {
-
-            Result.Error(
-                e.message ?: "Error desconocido"
-            )
-        }
+    private suspend fun getCharactersResponse(
+        animeId: Int
+    ): Response<CharacterResponse> {
+        return apiClient.getCharacters(animeId)
     }
 
-    suspend fun getCharactersJba() : Result<List<CharacterUiModel>> {
-        return try {
+    fun observeCharacters(
+        animeId: Int
+    ): Flow<List<CharacterUiModel>> {
 
-            val response = apiClient.getCharactersJba()
-
-            if(response.isSuccessful){
-                val characters = response
-                    .body()
-                    ?.data
-                    ?.map { it.toUiModel() }
-                    ?: emptyList()
-
-                Result.Success(characters)
-
-            } else {
-                Result.Error(
-                    "Error HTTP ${response.code()}"
-                )
+        return characterDAO
+            .observeCharacters(animeId)
+            .map { entities ->
+                entities.map { it.entityToUiModel() }
             }
-
-        } catch (e : Exception) {
-            Result.Error(
-                e.message ?: "Error desconocido"
-            )
-        }
     }
 
-    suspend fun getCharactersAot() : Result<List<CharacterUiModel>> {
+    suspend fun refreshCharacters(
+        animeId: Int
+    ) : Result<Unit> {
         return try {
 
-            val response = apiClient.getCharactersAot()
+            val response = getCharactersResponse(animeId)
 
             if (response.isSuccessful){
-                val characters = response
+                val characters  = response
                     .body()
                     ?.data
-                    ?.map { it.toUiModel() }
+                    ?.map { it.characterItemToEntity(animeId) }
                     ?: emptyList()
 
-                Result.Success(characters)
+                characterDAO.insertCharacters(characters)
+
+                Result.Success(Unit)
             } else {
                 Result.Error(
                     "Error HTTP ${response.code()}"
                 )
             }
 
-        } catch ( e : Exception){
+        } catch (e : Exception){
             Result.Error(
                 e.message ?: "Error desconocido"
             )
