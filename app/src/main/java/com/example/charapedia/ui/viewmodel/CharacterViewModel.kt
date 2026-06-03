@@ -49,7 +49,8 @@ class CharacterViewModel @Inject constructor(
     }
 
     fun getCharacter(malId: Int) {
-        getCharacterById(malId)
+        observeCharacter(malId)
+        refreshCharacter(malId)
     }
 
     private fun observeCharacters(
@@ -102,6 +103,50 @@ class CharacterViewModel @Inject constructor(
 
     }
 
+    private fun observeCharacter(
+        malId: Int
+    ){
+        viewModelScope.launch {
+            repository
+                .observeCharacter(malId)
+                .collect { character ->
+                    _character.value = character
+                }
+        }
+    }
+
+    private fun refreshCharacter(
+        malId: Int
+    ) {
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoadingCharacter = true
+                )
+            }
+
+            when(
+                repository.getCharacterById(malId)
+            ) {
+                is Result.Success -> {}
+                is Result.Error -> {
+                    _events.emit(
+                        Event.ShowError()
+                    )
+                }
+            }
+
+            _uiState.update {
+                it.copy(
+                    isLoadingCharacter = false
+                )
+            }
+
+        }
+
+    }
+
     private fun observeAllCharacters() {
 
         observeCharacters(AnimeId.DBZ.id) {
@@ -144,52 +189,6 @@ class CharacterViewModel @Inject constructor(
             }
         }
 
-    }
-
-    private fun loadCharacterById(
-        malId: Int,
-        fetch: suspend (Int) -> Result<CharacterDetailUiModel?>,
-        onSuccess: (CharacterDetailUiModel?) -> Unit,
-        updateLoading: (Boolean) -> Unit
-    ) {
-        viewModelScope.launch {
-
-            updateLoading(true)
-
-            when (val result = fetch(malId)) {
-                is Result.Success -> {
-                    onSuccess(result.data)
-                }
-
-                is Result.Error -> {
-                    _events.emit(
-                        Event.ShowError()
-                    )
-                }
-            }
-
-            updateLoading(false)
-
-        }
-    }
-
-    private fun getCharacterById(malId: Int) {
-        loadCharacterById(
-            malId = malId,
-            fetch = { malId: Int ->
-                repository.getCharacterById(malId)
-            },
-            onSuccess = {
-                _character.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingCharacter = loading
-                    )
-                }
-            }
-        )
     }
 
 }
