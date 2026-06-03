@@ -1,12 +1,15 @@
 package com.example.charapedia.data.network
 
 import com.example.charapedia.data.local.dao.CharacterDAO
+import com.example.charapedia.data.local.dao.CharacterDetailDAO
+import com.example.charapedia.data.network.response.character.CharacterDetailResponse
 import com.example.charapedia.data.network.response.characters.CharacterResponse
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
 import com.example.charapedia.ui.models.character.CharacterDetailUiModel
 import com.example.charapedia.ui.models.characterItemToEntity
 import com.example.charapedia.ui.models.characters.CharacterUiModel
 import com.example.charapedia.ui.models.entityToUiModel
+import com.example.charapedia.ui.models.entityToUiModelDetail
 import com.example.charapedia.ui.models.toUiModelAnimeDetail
 import com.example.charapedia.ui.models.toUiModelDetail
 import kotlinx.coroutines.flow.Flow
@@ -18,13 +21,31 @@ import javax.inject.Singleton
 @Singleton
 class ApiRepository @Inject constructor(
     private val apiClient: ApiClient,
-    private val characterDAO: CharacterDAO
+    private val characterDAO: CharacterDAO,
+    private val characterDetailDAO: CharacterDetailDAO
 ) {
 
     private suspend fun getCharactersResponse(
         animeId: Int
     ): Response<CharacterResponse> {
         return apiClient.getCharacters(animeId)
+    }
+
+    private suspend fun getCharacterResponse(
+        malId: Int
+    ): Response<CharacterDetailResponse> {
+        return apiClient.getCharacterById(malId)
+    }
+
+    fun observeCharacter(
+        malId: Int
+    ): Flow<CharacterDetailUiModel>{
+
+        return characterDetailDAO
+            .getCharacterDetail(malId)
+            .map { it.entityToUiModelDetail() }
+
+
     }
 
     fun observeCharacters(
