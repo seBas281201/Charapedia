@@ -127,7 +127,7 @@ class CharacterViewModel @Inject constructor(
             }
 
             when(
-                repository.getCharacterById(malId)
+                repository.refreshCharacter(malId)
             ) {
                 is Result.Success -> {}
                 is Result.Error -> {
