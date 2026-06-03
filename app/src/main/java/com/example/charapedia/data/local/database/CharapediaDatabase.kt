@@ -9,7 +9,7 @@ import com.example.charapedia.data.local.entity.CharacterEntity
 
 @Database(
     entities = [CharacterEntity::class, CharacterDetailEntity::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 
