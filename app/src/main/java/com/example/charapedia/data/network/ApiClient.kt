@@ -9,14 +9,11 @@ import retrofit2.http.Path
 
 interface ApiClient {
 
-    @GET("anime/813/characters")
-    suspend fun getCharactersDbz() : Response<CharacterResponse>
-
-    @GET("anime/14719/characters")
-    suspend fun getCharactersJba() : Response<CharacterResponse>
-
-    @GET("anime/16498/characters")
-    suspend fun getCharactersAot() : Response<CharacterResponse>
+    @GET("anime/{animeId}/characters")
+    suspend fun getCharacters(
+        @Path("animeId")
+        animeId: Int
+    ): Response<CharacterResponse>
 
     @GET("anime/{malId}")
     suspend fun getAnimeById(
