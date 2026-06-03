@@ -2,6 +2,7 @@ package com.example.charapedia.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.charapedia.data.AnimeId
 import com.example.charapedia.data.network.ApiRepository
 import com.example.charapedia.ui.UiState
 import com.example.charapedia.ui.models.characters.CharacterUiModel
@@ -43,18 +44,35 @@ class CharacterViewModel @Inject constructor(
     val events: SharedFlow<Event> = _events.asSharedFlow()
 
     fun getCharacters() {
-        getCharactersDbz()
-        getCharactersJba()
-        getCharactersAot()
+        observeAllCharacters()
+        refreshAllCharacters()
     }
 
     fun getCharacter(malId: Int) {
         getCharacterById(malId)
     }
 
-    private fun loadCharacters(
-        fetch: suspend () -> Result<List<CharacterUiModel>>,
-        onSuccess: (List<CharacterUiModel>) -> Unit,
+    private fun observeCharacters(
+        animeId: Int,
+        onUpdate: (List<CharacterUiModel>) -> Unit
+    ) {
+
+        viewModelScope.launch {
+
+            repository
+                .observeCharacters(animeId)
+                .collect { characters ->
+
+                    onUpdate(characters)
+
+                }
+
+        }
+
+    }
+
+    private fun refreshCharacters(
+        animeId: Int,
         updateLoading: (Boolean) -> Unit
     ) {
 
@@ -62,20 +80,68 @@ class CharacterViewModel @Inject constructor(
 
             updateLoading(true)
 
-            when (val result = fetch()) {
-                is Result.Success -> {
-                    onSuccess(result.data)
-                }
+            when (
+                repository.refreshCharacters(animeId)
+            ) {
+
+                is Result.Success -> {}
 
                 is Result.Error -> {
+
                     _events.emit(
                         Event.ShowError()
                     )
+
                 }
+
             }
 
             updateLoading(false)
 
+        }
+
+    }
+
+    private fun observeAllCharacters() {
+
+        observeCharacters(AnimeId.DBZ.id) {
+            _charactersDbz.value = it
+        }
+
+        observeCharacters(AnimeId.JBA.id) {
+            _charactersJba.value = it
+        }
+
+        observeCharacters(AnimeId.AOT.id) {
+            _charactersAot.value = it
+        }
+
+    }
+
+    private fun refreshAllCharacters() {
+
+        refreshCharacters(AnimeId.DBZ.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingDbz = loading
+                )
+            }
+        }
+
+        refreshCharacters(AnimeId.JBA.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingJba = loading
+                )
+            }
+        }
+
+        refreshCharacters(AnimeId.AOT.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingAot = loading
+                )
+            }
         }
 
     }
@@ -120,60 +186,6 @@ class CharacterViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoadingCharacter = loading
-                    )
-                }
-            }
-        )
-    }
-
-    private fun getCharactersDbz() {
-        loadCharacters(
-            fetch = {
-                repository.getCharactersDbz()
-            },
-            onSuccess = {
-                _charactersDbz.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingDbz = loading
-                    )
-                }
-            }
-        )
-    }
-
-    private fun getCharactersJba() {
-        loadCharacters(
-            fetch = {
-                repository.getCharactersJba()
-            },
-            onSuccess = {
-                _charactersJba.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingJba = loading
-                    )
-                }
-            }
-        )
-    }
-
-    private fun getCharactersAot() {
-        loadCharacters(
-            fetch = {
-                repository.getCharactersAot()
-            },
-            onSuccess = {
-                _charactersAot.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingAot = loading
                     )
                 }
             }
