@@ -3,11 +3,13 @@ package com.example.charapedia.data.local.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.charapedia.data.local.dao.CharacterDAO
+import com.example.charapedia.data.local.dao.CharacterDetailDAO
+import com.example.charapedia.data.local.entity.CharacterDetailEntity
 import com.example.charapedia.data.local.entity.CharacterEntity
 
 @Database(
-    entities = [CharacterEntity::class],
-    version = 1,
+    entities = [CharacterEntity::class, CharacterDetailEntity::class],
+    version = 2,
     exportSchema = false
 )
 
@@ -15,5 +17,6 @@ import com.example.charapedia.data.local.entity.CharacterEntity
 abstract class CharapediaDatabase : RoomDatabase(){
 
     abstract fun characterDao() : CharacterDAO
+    abstract fun characterDetailDao() : CharacterDetailDAO
 
 }

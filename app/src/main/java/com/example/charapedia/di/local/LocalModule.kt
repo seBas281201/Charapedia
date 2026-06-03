@@ -35,4 +35,13 @@ object LocalModule {
         return db.characterDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideCharacterDetailDAO(
+        db: CharapediaDatabase
+    ): CharacterDetailDAO {
+        return db.characterDetailDao()
+    }
+
+
 }
