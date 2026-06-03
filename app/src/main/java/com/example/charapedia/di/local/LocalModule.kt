@@ -3,6 +3,7 @@ package com.example.charapedia.di.local
 import android.content.Context
 import androidx.room.Room
 import com.example.charapedia.data.local.dao.CharacterDAO
+import com.example.charapedia.data.local.dao.CharacterDetailDAO
 import com.example.charapedia.data.local.database.CharapediaDatabase
 import dagger.Module
 import dagger.Provides
