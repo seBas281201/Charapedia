@@ -6,12 +6,12 @@ import com.example.charapedia.data.network.response.character.CharacterDetailRes
 import com.example.charapedia.data.network.response.characters.CharacterResponse
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
 import com.example.charapedia.ui.models.character.CharacterDetailUiModel
+import com.example.charapedia.ui.models.characterDetailToEntity
 import com.example.charapedia.ui.models.characterItemToEntity
 import com.example.charapedia.ui.models.characters.CharacterUiModel
 import com.example.charapedia.ui.models.entityToUiModel
 import com.example.charapedia.ui.models.entityToUiModelDetail
 import com.example.charapedia.ui.models.toUiModelAnimeDetail
-import com.example.charapedia.ui.models.toUiModelDetail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
@@ -89,40 +89,34 @@ class ApiRepository @Inject constructor(
         }
     }
 
-    suspend fun getCharacterById(
+    suspend fun refreshCharacter(
         malId: Int
-    ): Result<CharacterDetailUiModel> {
-
+    ) : Result<Unit> {
         return try {
+            val response = getCharacterResponse(malId)
 
-            val response = apiClient.getCharacterById(malId)
-
-            if(response.isSuccessful) {
-
-                val character = response.body()
+            if(response.isSuccessful){
+                val character = response
+                    .body()
                     ?.data
-                    ?.toUiModelDetail()
+                    ?.characterDetailToEntity()
 
-                if(character != null) {
-
-                    Result.Success(character)
-
+                if(character != null){
+                    characterDetailDAO.insertCharacterDetail(character)
+                    Result.Success(Unit)
                 } else {
-
                     Result.Error(
                         "No se encontró el personaje"
                     )
                 }
 
             } else {
-
                 Result.Error(
                     "Error HTTP ${response.code()}"
                 )
             }
 
-        } catch (e: Exception) {
-
+        } catch (e : Exception){
             Result.Error(
                 e.message ?: "Error desconocido"
             )
