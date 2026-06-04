@@ -53,6 +53,3 @@ object LocalModule {
         return db.animeDAO()
     }
 }
-
-
-}
