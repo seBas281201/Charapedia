@@ -2,6 +2,7 @@ package com.example.charapedia.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.charapedia.data.AnimeId
 import com.example.charapedia.data.network.ApiRepository
 import com.example.charapedia.ui.Event
 import com.example.charapedia.ui.UiState
@@ -24,12 +25,6 @@ class AnimeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    companion object {
-        private const val DBZ_ID: Int = 813
-        private const val JBA_ID: Int = 14719
-        private const val AOT_ID: Int = 16498
-    }
-
     private val _uiState = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _uiState.asStateFlow()
 
@@ -45,33 +40,40 @@ class AnimeViewModel @Inject constructor(
     private val _events = MutableSharedFlow<Event>()
     val events: SharedFlow<Event> = _events.asSharedFlow()
 
-    fun getAnime() {
-        getDbzAnime()
-        getJbaAnime()
-        getAotAnime()
+
+    fun getAnimes() {
+        observeAllAnimes()
+        refreshAllAnimes()
     }
-    private fun loadAnimeById(
+    private fun observeAnimes(
+        malId : Int,
+        onUpdate : (AnimeDetailUiModel?) -> Unit
+    ) {
+        viewModelScope.launch {
+            repository
+                .observeAnime(malId)
+                .collect { anime ->
+                    onUpdate(anime)
+                }
+        }
+
+    }
+
+    private fun refreshAnimes(
         malId: Int,
-        fetch: suspend (Int) -> Result<AnimeDetailUiModel?>,
-        onSuccess: (AnimeDetailUiModel?) -> Unit,
         updateLoading: (Boolean) -> Unit
     ) {
-
         viewModelScope.launch {
 
             updateLoading(true)
 
-            when (val result = fetch(malId)) {
-                is Result.Success -> {
-                    onSuccess(result.data)
-                }
-
+            when (repository.refreshAnime(malId)) {
+                is Result.Success -> {}
                 is Result.Error -> {
                     _events.emit(
                         Event.ShowError()
                     )
                 }
-
             }
 
             updateLoading(false)
@@ -80,67 +82,46 @@ class AnimeViewModel @Inject constructor(
 
     }
 
-    private fun getDbzAnime() {
-        loadAnimeById(
-            malId = DBZ_ID,
-            fetch = { malId ->
-                repository.getAnimeById(malId)
-            },
-            onSuccess = {
-                _animeDbz.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingAnimeDbz = loading
-                    )
+    private fun observeAllAnimes(){
+        observeAnimes(AnimeId.DBZ.id) {
+            _animeDbz.value = it
+        }
 
-                }
-            }
+        observeAnimes(AnimeId.JBA.id) {
+            _animeJba.value = it
+        }
 
-        )
+        observeAnimes(AnimeId.AOT.id) {
+            _animeAot.value = it
+        }
+
     }
 
-    private fun getJbaAnime() {
-        loadAnimeById(
-            malId = JBA_ID,
-            fetch = { malId ->
-                repository.getAnimeById(malId)
-            },
-            onSuccess = {
-                _animeJba.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingAnimeJba = loading
-                    )
-
-                }
+    private fun refreshAllAnimes(){
+        refreshAnimes(AnimeId.DBZ.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingDbz = loading
+                )
             }
+        }
 
-        )
-    }
-
-    private fun getAotAnime() {
-        loadAnimeById(
-            malId = AOT_ID,
-            fetch = { malId ->
-                repository.getAnimeById(malId)
-            },
-            onSuccess = {
-                _animeAot.value = it
-            },
-            updateLoading = { loading ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingAnimeAot = loading
-                    )
-
-                }
+        refreshAnimes(AnimeId.JBA.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingJba = loading
+                )
             }
+        }
 
-        )
+
+        refreshAnimes(AnimeId.AOT.id) { loading ->
+            _uiState.update { state ->
+                state.copy(
+                    isLoadingAot = loading
+                )
+            }
+        }
     }
 
 
