@@ -1,5 +1,6 @@
 package com.example.charapedia.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.charapedia.data.AnimeId
@@ -9,6 +10,7 @@ import com.example.charapedia.ui.UiState
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
 import com.example.charapedia.data.network.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -53,6 +55,11 @@ class AnimeViewModel @Inject constructor(
             repository
                 .observeAnime(malId)
                 .collect { anime ->
+
+                    Log.d(
+                        "ANIME_FLOW",
+                        "id=$malId anime=$anime"
+                    )
                     onUpdate(anime)
                 }
         }
@@ -98,28 +105,33 @@ class AnimeViewModel @Inject constructor(
     }
 
     private fun refreshAllAnimes(){
-        refreshAnimes(AnimeId.DBZ.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingDbz = loading
-                )
+        viewModelScope.launch {
+            refreshAnimes(AnimeId.DBZ.id) { loading ->
+                _uiState.update { state ->
+                    state.copy(
+                        isLoadingDbz = loading
+                    )
+                }
             }
-        }
 
-        refreshAnimes(AnimeId.JBA.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingJba = loading
-                )
+            delay(1000)
+
+            refreshAnimes(AnimeId.JBA.id) { loading ->
+                _uiState.update { state ->
+                    state.copy(
+                        isLoadingJba = loading
+                    )
+                }
             }
-        }
 
+            delay(1000)
 
-        refreshAnimes(AnimeId.AOT.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingAot = loading
-                )
+            refreshAnimes(AnimeId.AOT.id) { loading ->
+                _uiState.update { state ->
+                    state.copy(
+                        isLoadingAot = loading
+                    )
+                }
             }
         }
     }

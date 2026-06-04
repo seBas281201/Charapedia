@@ -23,10 +23,11 @@ object LocalModule {
         @ApplicationContext context: Context
     ): CharapediaDatabase {
         return Room.databaseBuilder(
-            context,
-            CharapediaDatabase::class.java,
-            "charapedia_db"
-        ).build()
+                context,
+                CharapediaDatabase::class.java,
+                "charapedia_db"
+            ).fallbackToDestructiveMigration(true)
+            .build()
     }
 
     @Provides

@@ -11,7 +11,7 @@ import com.example.charapedia.data.local.entity.CharacterEntity
 
 @Database(
     entities = [CharacterEntity::class, CharacterDetailEntity::class, AnimeEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 
