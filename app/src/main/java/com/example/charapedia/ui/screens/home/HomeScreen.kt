@@ -61,7 +61,7 @@ fun HomeScreen(
     }
 
     LaunchedEffect(animeVm) {
-        animeVm.getAnime()
+        animeVm.getAnimes()
     }
 
     LaunchedEffect(Unit) {
