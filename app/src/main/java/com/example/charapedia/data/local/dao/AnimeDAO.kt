@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AnimeDAO {
-    @Query("SELECT * FROM animes")
-    fun observeAnimes(): Flow<List<AnimeEntity>>
+    @Query("SELECT * FROM animes WHERE id = :malId")
+    fun observeAnimes(
+        malId: Int
+    ): Flow<AnimeEntity?>
 
     @Insert
-    suspend fun insertAnimes(animes: List<AnimeEntity>)
+    suspend fun insertAnimes(animes: AnimeEntity)
 }

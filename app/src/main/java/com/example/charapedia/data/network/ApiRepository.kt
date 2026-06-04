@@ -1,18 +1,20 @@
 package com.example.charapedia.data.network
 
-import android.util.Log
+import com.example.charapedia.data.local.dao.AnimeDAO
 import com.example.charapedia.data.local.dao.CharacterDAO
 import com.example.charapedia.data.local.dao.CharacterDetailDAO
+import com.example.charapedia.data.network.response.animes.AnimeDetailResponse
 import com.example.charapedia.data.network.response.character.CharacterDetailResponse
 import com.example.charapedia.data.network.response.characters.CharacterResponse
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
+import com.example.charapedia.ui.models.animeDetailToEntity
 import com.example.charapedia.ui.models.character.CharacterDetailUiModel
 import com.example.charapedia.ui.models.characterDetailToEntity
 import com.example.charapedia.ui.models.characterItemToEntity
 import com.example.charapedia.ui.models.characters.CharacterUiModel
 import com.example.charapedia.ui.models.entityToUiModel
+import com.example.charapedia.ui.models.entityToUiModelAnimeDetail
 import com.example.charapedia.ui.models.entityToUiModelDetail
-import com.example.charapedia.ui.models.toUiModelAnimeDetail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
@@ -23,7 +25,8 @@ import javax.inject.Singleton
 class ApiRepository @Inject constructor(
     private val apiClient: ApiClient,
     private val characterDAO: CharacterDAO,
-    private val characterDetailDAO: CharacterDetailDAO
+    private val characterDetailDAO: CharacterDetailDAO,
+    private val animeDAO: AnimeDAO
 ) {
 
     private suspend fun getCharactersResponse(
@@ -38,6 +41,12 @@ class ApiRepository @Inject constructor(
         return apiClient.getCharacterById(malId)
     }
 
+    private suspend fun getAnimeResponse(
+        malId: Int
+    ): Response<AnimeDetailResponse> {
+        return apiClient.getAnimeById(malId)
+    }
+
     fun observeCharacter(
         malId: Int
     ): Flow<CharacterDetailUiModel?>{
@@ -49,6 +58,16 @@ class ApiRepository @Inject constructor(
             }
 
 
+    }
+
+    fun observeAnime(
+        malId : Int
+    ) : Flow<AnimeDetailUiModel?>{
+        return animeDAO
+            .observeAnimes(malId)
+            .map { entity ->
+                entity?.entityToUiModelAnimeDetail()
+            }
     }
 
     fun observeCharacters(
@@ -125,27 +144,31 @@ class ApiRepository @Inject constructor(
         }
     }
 
-    suspend fun getAnimeById(malId : Int) : Result<AnimeDetailUiModel> {
+    suspend fun refreshAnime(
+        malId : Int
+    ): Result<Unit> {
         return try {
 
-            val response = apiClient.getAnimeById(malId)
+            val result = getAnimeResponse(malId)
 
-            if(response.isSuccessful){
-                val anime = response
+            if(result.isSuccessful){
+                val anime = result
                     .body()
                     ?.data
-                    ?.toUiModelAnimeDetail()
+                    ?.animeDetailToEntity()
 
-               if (anime != null){
-                   Result.Success(anime)
-               } else {
-                   Result.Error(
-                       "No se encontró el anime"
-                   )
-               }
-            } else{
+                if (anime != null){
+                    animeDAO.insertAnimes(anime)
+                    Result.Success(Unit)
+                } else {
+                    Result.Error(
+                        "No se encontró el anime"
+                    )
+                }
+
+            } else {
                 Result.Error(
-                    "Error HTTP ${response.code()}"
+                    "Error HTTP ${result.code()}"
                 )
             }
 
@@ -155,6 +178,5 @@ class ApiRepository @Inject constructor(
             )
         }
     }
-
 
 }

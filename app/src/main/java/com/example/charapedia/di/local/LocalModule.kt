@@ -2,6 +2,7 @@ package com.example.charapedia.di.local
 
 import android.content.Context
 import androidx.room.Room
+import com.example.charapedia.data.local.dao.AnimeDAO
 import com.example.charapedia.data.local.dao.CharacterDAO
 import com.example.charapedia.data.local.dao.CharacterDetailDAO
 import com.example.charapedia.data.local.database.CharapediaDatabase
@@ -43,6 +44,15 @@ object LocalModule {
     ): CharacterDetailDAO {
         return db.characterDetailDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideAnimeDAO(
+        db: CharapediaDatabase
+    ): AnimeDAO {
+        return db.animeDAO()
+    }
+}
 
 
 }

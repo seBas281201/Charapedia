@@ -1,5 +1,6 @@
 package com.example.charapedia.ui.models
 
+import com.example.charapedia.data.local.entity.AnimeEntity
 import com.example.charapedia.data.local.entity.CharacterDetailEntity
 import com.example.charapedia.data.local.entity.CharacterEntity
 import com.example.charapedia.data.network.response.animes.AnimeDetail
@@ -53,9 +54,17 @@ fun CharacterDetailEntity.entityToUiModelDetail() : CharacterDetailUiModel{
     )
 }
 
-fun AnimeDetail.toUiModelAnimeDetail() : AnimeDetailUiModel {
+
+fun AnimeDetail.animeDetailToEntity() : AnimeEntity {
+    return AnimeEntity(
+        id = malId,
+        images = images.webp.imageUrl
+    )
+}
+
+fun AnimeEntity.entityToUiModelAnimeDetail() : AnimeDetailUiModel {
     return AnimeDetailUiModel(
-        malId = malId,
-        imageUrl = images.webp.imageUrl
+        malId = id,
+        imageUrl = images
     )
 }
