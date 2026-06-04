@@ -23,4 +23,9 @@ interface CharacterDAO {
     suspend fun insertCharacters(
         characters: List<CharacterEntity>
     )
+
+    @Query(
+        "SELECT COUNT(*) FROM characters"
+    )
+    suspend fun getCount(): Int
 }

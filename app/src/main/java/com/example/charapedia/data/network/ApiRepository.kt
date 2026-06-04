@@ -1,5 +1,6 @@
 package com.example.charapedia.data.network
 
+import android.util.Log
 import com.example.charapedia.data.local.dao.CharacterDAO
 import com.example.charapedia.data.local.dao.CharacterDetailDAO
 import com.example.charapedia.data.network.response.character.CharacterDetailResponse
@@ -39,11 +40,13 @@ class ApiRepository @Inject constructor(
 
     fun observeCharacter(
         malId: Int
-    ): Flow<CharacterDetailUiModel>{
+    ): Flow<CharacterDetailUiModel?>{
 
         return characterDetailDAO
             .getCharacterDetail(malId)
-            .map { it.entityToUiModelDetail() }
+            .map { entity ->
+                entity?.entityToUiModelDetail()
+            }
 
 
     }
@@ -74,7 +77,6 @@ class ApiRepository @Inject constructor(
                     ?: emptyList()
 
                 characterDAO.insertCharacters(characters)
-
                 Result.Success(Unit)
             } else {
                 Result.Error(

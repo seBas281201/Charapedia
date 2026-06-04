@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface CharacterDetailDAO {
 
     @Query("SELECT * FROM charactersDetails WHERE id = :id")
-    fun getCharacterDetail(id: Int): Flow<CharacterDetailEntity>
+    fun getCharacterDetail(id: Int): Flow<CharacterDetailEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacterDetail(characterDetail: CharacterDetailEntity)
