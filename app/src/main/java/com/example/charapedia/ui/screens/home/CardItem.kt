@@ -37,7 +37,7 @@ fun CardItem(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
         ),
