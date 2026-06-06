@@ -24,8 +24,8 @@ interface CharacterDAO {
         characters: List<CharacterEntity>
     )
 
-    @Query(
-        "SELECT COUNT(*) FROM characters"
-    )
-    suspend fun getCount(): Int
+    @Query("SELECT * FROM characters WHERE name LIKE '%' || :query || '%'")
+    fun searchCharacters(query: String): Flow<List<CharacterEntity>>
+
+
 }
