@@ -1,5 +1,6 @@
 package com.example.charapedia.data.network
 
+import android.util.Log
 import com.example.charapedia.data.local.dao.AnimeDAO
 import com.example.charapedia.data.local.dao.CharacterDAO
 import com.example.charapedia.data.local.dao.CharacterDetailDAO
@@ -81,6 +82,16 @@ class ApiRepository @Inject constructor(
             }
     }
 
+    fun searchCharacters(query: String): Flow<List<CharacterUiModel>> {
+
+        return characterDAO
+            .searchCharacters(query)
+            .map { entities ->
+                entities.map { it.entityToUiModel() }
+            }
+
+    }
+
     suspend fun refreshCharacters(
         animeId: Int
     ) : Result<Unit> {
@@ -116,6 +127,8 @@ class ApiRepository @Inject constructor(
         return try {
             val response = getCharacterResponse(malId)
 
+
+
             if(response.isSuccessful){
                 val character = response
                     .body()
@@ -124,6 +137,10 @@ class ApiRepository @Inject constructor(
 
                 if(character != null){
                     characterDetailDAO.insertCharacterDetail(character)
+                    Log.d(
+                        "ANIME_API_SUCCESS",
+                        "${response.code()} -> ${response.body()}"
+                    )
                     Result.Success(Unit)
                 } else {
                     Result.Error(
@@ -132,6 +149,10 @@ class ApiRepository @Inject constructor(
                 }
 
             } else {
+                Log.d(
+                    "ANIME_API",
+                    "Error ${response.code()} -> ${response.errorBody()?.string()}"
+                )
                 Result.Error(
                     "Error HTTP ${response.code()}"
                 )
