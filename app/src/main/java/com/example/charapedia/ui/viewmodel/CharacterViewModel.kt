@@ -96,37 +96,6 @@ class CharacterViewModel @Inject constructor(
 
     }
 
-    private fun refreshCharacters(
-        animeId: Int,
-        updateLoading: (Boolean) -> Unit
-    ) {
-
-        viewModelScope.launch {
-
-            updateLoading(true)
-
-            when (
-                repository.refreshCharacters(animeId)
-            ) {
-
-                is Result.Success -> {}
-
-                is Result.Error -> {
-
-                    _events.emit(
-                        Event.ShowError()
-                    )
-
-                }
-
-            }
-
-            updateLoading(false)
-
-        }
-
-    }
-
     private fun observeCharacter(
         malId: Int
     ){
@@ -188,29 +157,33 @@ class CharacterViewModel @Inject constructor(
     }
 
     private fun refreshAllCharacters() {
-
-        refreshCharacters(AnimeId.DBZ.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingDbz = loading
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoadingDbz = true,
+                    isLoadingJba = true,
+                    isLoadingAot = true
                 )
             }
-        }
 
-        refreshCharacters(AnimeId.JBA.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingJba = loading
+            val resultDbz = repository.refreshCharacters(AnimeId.DBZ.id)
+            val resultJba = repository.refreshCharacters(AnimeId.JBA.id)
+            val resultAot = repository.refreshCharacters(AnimeId.AOT.id)
+
+            _uiState.update {
+                it.copy(
+                    isLoadingDbz = false,
+                    isLoadingJba = false,
+                    isLoadingAot = false
                 )
             }
-        }
 
-        refreshCharacters(AnimeId.AOT.id) { loading ->
-            _uiState.update { state ->
-                state.copy(
-                    isLoadingAot = loading
+            if(resultDbz is Result.Error || resultJba is Result.Error || resultAot is Result.Error){
+                _events.emit(
+                    Event.ShowError()
                 )
             }
+
         }
 
     }
