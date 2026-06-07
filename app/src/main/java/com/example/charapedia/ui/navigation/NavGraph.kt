@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.charapedia.ui.screens.CharacterDetailScreen
-import com.example.charapedia.ui.screens.home.HomeScreen
+import com.example.charapedia.ui.screens.HomeScreen
 
 @Composable
 fun NavGraph() {

@@ -10,12 +10,16 @@ import com.example.charapedia.data.network.Result
 import com.example.charapedia.ui.Event
 import com.example.charapedia.ui.models.character.CharacterDetailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,6 +44,22 @@ class CharacterViewModel @Inject constructor(
     private val _character = MutableStateFlow<CharacterDetailUiModel?>(null)
     val character: StateFlow<CharacterDetailUiModel?> = _character.asStateFlow()
 
+    private val _query = MutableStateFlow("")
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val charactersFiltered: StateFlow<List<CharacterUiModel>> = _query.flatMapLatest { query ->
+        if(query.isBlank()){
+            flowOf(emptyList())
+        } else {
+            repository.searchCharacters(query)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+
     private val _events = MutableSharedFlow<Event>()
     val events: SharedFlow<Event> = _events.asSharedFlow()
 
@@ -51,6 +71,10 @@ class CharacterViewModel @Inject constructor(
     fun getCharacter(malId: Int) {
         observeCharacter(malId)
         refreshCharacter(malId)
+    }
+
+    fun searchCharacters(query: String) {
+        _query.value = query
     }
 
     private fun observeCharacters(

@@ -1,4 +1,4 @@
-package com.example.charapedia.ui.screens.home
+package com.example.charapedia.ui.screens
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieConstants
 import com.example.charapedia.R
 import com.example.charapedia.ui.Event
+import com.example.charapedia.ui.elements.CharacterList
+import com.example.charapedia.ui.elements.DefaultTextField
 import com.example.charapedia.ui.viewmodel.AnimeViewModel
 import com.example.charapedia.ui.viewmodel.CharacterViewModel
 import com.example.charapedia.utilities.SectionLoading
@@ -44,6 +49,10 @@ fun HomeScreen(
     val charactersDbz by characterVm.charactersDbz.collectAsState()
     val charactersJba by characterVm.charactersJba.collectAsState()
     val charactersAot by characterVm.charactersAot.collectAsState()
+    val charactersFiltered by characterVm.charactersFiltered.collectAsState()
+    var query by rememberSaveable {
+        mutableStateOf("")
+    }
 
     val stateAnime by animeVm.state.collectAsState()
     val animeDbz by animeVm.animeDbz.collectAsState()
@@ -119,99 +128,112 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                item {
-
-                    Text(
-                        text = stringResource(R.string.HomeScreen_Item_Title_Dbz),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                item{
+                    DefaultTextField(
+                        query = query,
+                        onSearch = {
+                            query = it
+                            characterVm.searchCharacters(it)
+                        },
+                        onCleanSearch = {
+                            query = ""
+                        }
                     )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if(stateCharacter.isLoadingDbz || stateAnime.isLoadingDbz ){
-                        SectionLoading(
-                            iterations = LottieConstants.IterateForever
-                        )
-                    } else {
-
-                        CharacterList(
-                            characters = charactersDbz,
-                            animeBanner = animeDbz,
-                            goToCharacterDetail = goToCharacterDetail
-                        )
-
-                    }
-
-                    Spacer(modifier = Modifier.height(40.dp))
-
                 }
 
                 item {
-
-                    Text(
-                        text = stringResource(R.string.HomeScreen_Item_Title_Jba),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if(stateCharacter.isLoadingJba || stateAnime.isLoadingJba ){
-                        SectionLoading(
-                            iterations = LottieConstants.IterateForever
-                        )
-                    } else {
-
+                    if(charactersFiltered.isNotEmpty() && query.isNotBlank()){
                         CharacterList(
-                            characters = charactersJba,
-                            animeBanner = animeJba,
+                            characters = charactersFiltered,
+                            animeBanner = null,
                             goToCharacterDetail = goToCharacterDetail
                         )
-
-                    }
-
-                    Spacer(modifier = Modifier.height(40.dp))
-
-                }
-
-                item {
-
-                    Text(
-                        text = stringResource(R.string.HomeScreen_Item_Title_Aot),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if(stateCharacter.isLoadingAot || stateAnime.isLoadingAot ){
-                        SectionLoading(
-                            iterations = LottieConstants.IterateForever
-                        )
                     } else {
-
-                        CharacterList(
-                            characters = charactersAot,
-                            animeBanner = animeAot,
-                            goToCharacterDetail = goToCharacterDetail
+                        Text(
+                            text = stringResource(R.string.HomeScreen_Item_Title_Dbz),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
                         )
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        if(stateCharacter.isLoadingDbz || stateAnime.isLoadingDbz ){
+                            SectionLoading(
+                                iterations = LottieConstants.IterateForever
+                            )
+                        } else {
+
+                            CharacterList(
+                                characters = charactersDbz,
+                                animeBanner = animeDbz,
+                                goToCharacterDetail = goToCharacterDetail
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(40.dp))
+
+
+                        Text(
+                            text = stringResource(R.string.HomeScreen_Item_Title_Jba),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        if(stateCharacter.isLoadingJba || stateAnime.isLoadingJba ){
+                            SectionLoading(
+                                iterations = LottieConstants.IterateForever
+                            )
+                        } else {
+
+                            CharacterList(
+                                characters = charactersJba,
+                                animeBanner = animeJba,
+                                goToCharacterDetail = goToCharacterDetail
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(40.dp))
+
+                        Text(
+                            text = stringResource(R.string.HomeScreen_Item_Title_Aot),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        if(stateCharacter.isLoadingAot || stateAnime.isLoadingAot ){
+                            SectionLoading(
+                                iterations = LottieConstants.IterateForever
+                            )
+                        } else {
+
+                            CharacterList(
+                                characters = charactersAot,
+                                animeBanner = animeAot,
+                                goToCharacterDetail = goToCharacterDetail
+                            )
+
+                        }
+
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                     }
-
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                 }
+
 
             }
-
 
     }
 

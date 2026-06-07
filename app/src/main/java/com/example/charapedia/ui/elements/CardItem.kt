@@ -1,4 +1,4 @@
-package com.example.charapedia.ui.screens.home
+package com.example.charapedia.ui.elements
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

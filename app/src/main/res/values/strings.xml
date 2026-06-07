@@ -5,4 +5,6 @@
     <string name="HomeScreen_Item_Title_Jba">Personajes de Jojo\'s Bizarre Adventure</string>
     <string name="HomeScreen_Item_Title_Aot">Personajes de Attack on Titan</string>
 
+    <string name="DefaultSearchTextField_Placeholder">Buscar algún personaje en específico</string>
+
 </resources>
