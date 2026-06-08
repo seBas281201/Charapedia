@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,9 +44,10 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    characterVm : CharacterViewModel = hiltViewModel(),
-    animeVm : AnimeViewModel = hiltViewModel(),
-    goToCharacterDetail: (Int) -> Unit
+    characterVm: CharacterViewModel = hiltViewModel(),
+    animeVm: AnimeViewModel = hiltViewModel(),
+    goToCharacterDetail: (Int) -> Unit,
+    goToSettings: () -> Unit
 ) {
 
     val stateCharacter by characterVm.state.collectAsState()
@@ -107,9 +112,20 @@ fun HomeScreen(
                         style = MaterialTheme.typography.displayMedium
                     )
                 },
+                actions = {
+                    IconButton(
+                        onClick = { goToSettings() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = null
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },

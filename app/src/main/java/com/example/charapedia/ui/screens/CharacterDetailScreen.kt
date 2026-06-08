@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +50,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun CharacterDetailScreen(
     goBack: () -> Unit,
     characterVm: CharacterViewModel = hiltViewModel(),
-    malId: Int
+    malId: Int,
+    goToSettings: () -> Unit
 ) {
 
     val snackbarHostState = remember {
@@ -90,6 +92,15 @@ fun CharacterDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { goToSettings() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
                             contentDescription = null
                         )
                     }

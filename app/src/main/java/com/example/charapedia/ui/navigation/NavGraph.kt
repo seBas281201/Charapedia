@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.charapedia.ui.screens.CharacterDetailScreen
 import com.example.charapedia.ui.screens.HomeScreen
+import com.example.charapedia.ui.screens.SettingScreen
 
 @Composable
 fun NavGraph() {
@@ -27,6 +28,11 @@ fun NavGraph() {
                     navController.navigate(
                         Route.CharacterDetail.createRoute(malId)
                     )
+                },
+                goToSettings = {
+                    navController.navigate(
+                        Route.Settings.route
+                    )
                 }
             )
         }
@@ -44,6 +50,23 @@ fun NavGraph() {
 
             CharacterDetailScreen(
                 malId = malId,
+                goBack = {
+                    navController.popBackStack()
+                },
+                goToSettings = {
+                    navController.navigate(
+                        Route.Settings.route
+                    )
+                }
+            )
+
+        }
+
+        composable(
+            route = Route.Settings.route
+        ){
+
+            SettingScreen(
                 goBack = {
                     navController.popBackStack()
                 }
