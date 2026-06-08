@@ -31,6 +31,13 @@ val Typography = Typography(
         lineHeight = 44.sp,
         letterSpacing = 0.sp
     ),
+    displaySmall = TextStyle(
+        fontFamily = tropiland,
+        fontWeight = FontWeight.Normal,
+        fontSize = 25.sp,
+        lineHeight = 40.sp,
+        letterSpacing = 0.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = monserratRegular,
         fontWeight = FontWeight.Normal,

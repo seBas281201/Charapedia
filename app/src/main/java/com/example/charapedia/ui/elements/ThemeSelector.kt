@@ -1,5 +1,6 @@
-package com.example.charapedia.ui.screens
+package com.example.charapedia.ui.elements
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.charapedia.ui.theme.ThemeMode
 import com.example.charapedia.ui.viewmodel.PreferencesViewModel
@@ -71,6 +73,7 @@ fun ThemeSelector() {
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 cursorColor = MaterialTheme.colorScheme.primary
             ),
+            shape = RoundedCornerShape(15.dp),
             modifier = Modifier.menuAnchor(
                 type = MenuAnchorType.PrimaryNotEditable,
                 enabled = true
