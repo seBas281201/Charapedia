@@ -189,14 +189,12 @@ Cada nueva funcionalidad se desarrolla en una rama independiente y posteriorment
 
 ### Fase 3 – Experiencia de Usuario
 
-* [ ] Sistema de búsqueda
-* [ ] Mejoras en estados de carga
-* [ ] Mejor manejo de errores
+* [x] Sistema de búsqueda
+* [x] Mejoras en estados de carga
+* [x] Mejor manejo de errores
 
 ### Fase 4 – Optimización
 
-* [ ] Paginación
-* [ ] Optimización de rendimiento
 * [ ] Refactorización de código
 * [ ] Mejoras visuales
 
