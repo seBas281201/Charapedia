@@ -25,8 +25,9 @@ import com.example.charapedia.ui.models.characters.CharacterUiModel
 
 @Composable
 fun CardItem(
-    character : CharacterUiModel,
-    goToCharacterDetail : (Int) -> Unit
+    character: CharacterUiModel,
+    goToCharacterDetail: (Int) -> Unit,
+    modifier: Modifier
 ) {
     Card(
         onClick = {
@@ -41,7 +42,7 @@ fun CardItem(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
         ),
-        modifier = Modifier
+        modifier = modifier
             .width(95.dp)
             .height(70.dp)
     ) {
