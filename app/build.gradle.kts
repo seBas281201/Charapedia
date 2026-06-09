@@ -49,21 +49,18 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
-
-    // 2. El convertidor para mapear el JSON a objetos Kotlin/Java (usando Gson)
     implementation(libs.converter.gson)
-
-    // (Opcional pero muy recomendado) Para usar Corrutinas de Kotlin (suspend functions)
     implementation(libs.kotlinx.coroutines.android)
-
-    // (Opcional) Para ver las peticiones en la consola (Logcat) mientras desarrollas
     implementation(libs.logging.interceptor)
     implementation(libs.lottie.compose)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.animation)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.coil.compose)

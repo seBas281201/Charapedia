@@ -1,5 +1,10 @@
 package com.example.charapedia.ui.elements
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,10 +61,18 @@ fun CharacterList(
                 .height(350.dp)
         ) {
             items(characters){ character ->
-                CardItem(
-                    character = character,
-                    goToCharacterDetail = goToCharacterDetail
-                )
+
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut()
+                ) {
+                    CardItem(
+                        character = character,
+                        goToCharacterDetail = goToCharacterDetail,
+                        modifier = Modifier.animateItem()
+                    )
+                }
             }
         }
 

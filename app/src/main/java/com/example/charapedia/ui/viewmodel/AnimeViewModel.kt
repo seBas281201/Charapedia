@@ -5,12 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.charapedia.data.AnimeId
 import com.example.charapedia.data.network.ApiRepository
+import com.example.charapedia.data.network.Result
 import com.example.charapedia.ui.Event
 import com.example.charapedia.ui.UiState
 import com.example.charapedia.ui.models.anime.AnimeDetailUiModel
-import com.example.charapedia.data.network.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -66,29 +65,6 @@ class AnimeViewModel @Inject constructor(
 
     }
 
-    private fun refreshAnimes(
-        malId: Int,
-        updateLoading: (Boolean) -> Unit
-    ) {
-        viewModelScope.launch {
-
-            updateLoading(true)
-
-            when (repository.refreshAnime(malId)) {
-                is Result.Success -> {}
-                is Result.Error -> {
-                    _events.emit(
-                        Event.ShowError()
-                    )
-                }
-            }
-
-            updateLoading(false)
-
-        }
-
-    }
-
     private fun observeAllAnimes(){
         observeAnimes(AnimeId.DBZ.id) {
             _animeDbz.value = it
@@ -106,33 +82,32 @@ class AnimeViewModel @Inject constructor(
 
     private fun refreshAllAnimes(){
         viewModelScope.launch {
-            refreshAnimes(AnimeId.DBZ.id) { loading ->
-                _uiState.update { state ->
-                    state.copy(
-                        isLoadingDbz = loading
-                    )
-                }
+            _uiState.update {
+                it.copy(
+                    isLoadingAnimeDbz = true,
+                    isLoadingAnimeJba = true,
+                    isLoadingAnimeAot = true
+                )
             }
 
-            delay(1000)
+            val resultDbzAnime = repository.refreshAnime(AnimeId.DBZ.id)
+            val resultJbaAnime = repository.refreshAnime(AnimeId.JBA.id)
+            val resultAotAnime = repository.refreshAnime(AnimeId.AOT.id)
 
-            refreshAnimes(AnimeId.JBA.id) { loading ->
-                _uiState.update { state ->
-                    state.copy(
-                        isLoadingJba = loading
-                    )
-                }
+            _uiState.update {
+                it.copy(
+                    isLoadingAnimeDbz = false,
+                    isLoadingAnimeJba = false,
+                    isLoadingAnimeAot = false
+                )
             }
 
-            delay(1000)
-
-            refreshAnimes(AnimeId.AOT.id) { loading ->
-                _uiState.update { state ->
-                    state.copy(
-                        isLoadingAot = loading
-                    )
-                }
+            if(resultDbzAnime is Result.Error || resultJbaAnime is Result.Error || resultAotAnime is Result.Error){
+                _events.emit(
+                    Event.ShowError()
+                )
             }
+
         }
     }
 

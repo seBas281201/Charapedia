@@ -1,8 +1,7 @@
 package com.example.charapedia.ui.screens
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -28,17 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.airbnb.lottie.compose.LottieConstants
 import com.example.charapedia.R
 import com.example.charapedia.ui.Event
+import com.example.charapedia.ui.elements.AnimeSection
 import com.example.charapedia.ui.elements.CharacterList
 import com.example.charapedia.ui.elements.DefaultTextField
 import com.example.charapedia.ui.viewmodel.AnimeViewModel
 import com.example.charapedia.ui.viewmodel.CharacterViewModel
-import com.example.charapedia.utilities.SectionLoading
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +62,6 @@ fun HomeScreen(
     val animeAot by animeVm.animeAot.collectAsState()
 
 
-
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -80,7 +76,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         animeVm.events.collectLatest { event ->
-            when(event){
+            when (event) {
                 is Event.ShowError -> {
                     snackbarHostState.showSnackbar(
                         message = event.message
@@ -93,7 +89,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         characterVm.events.collectLatest { event ->
-            when(event){
+            when (event) {
                 is Event.ShowError -> {
                     snackbarHostState.showSnackbar(
                         message = event.message
@@ -135,122 +131,70 @@ fun HomeScreen(
             )
         },
         containerColor = MaterialTheme.colorScheme.background
-    ) {paddingValues ->
+    ) { paddingValues ->
 
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
-                item{
-                    DefaultTextField(
-                        query = query,
-                        onSearch = {
-                            query = it
-                            characterVm.searchCharacters(it)
-                        },
-                        onCleanSearch = {
-                            query = ""
-                        }
-                    )
-                }
+            item {
+                DefaultTextField(
+                    query = query,
+                    onSearch = {
+                        query = it
+                        characterVm.searchCharacters(it)
+                    },
+                    onCleanSearch = {
+                        query = ""
+                    }
+                )
+            }
 
-                item {
-                    if(charactersFiltered.isNotEmpty() && query.isNotBlank()){
+            item {
+                AnimatedContent(
+                    targetState = charactersFiltered.isNotEmpty() && query.isNotBlank(),
+                    label = "AnimatedContent_Search"
+                ) { isSearching ->
+                    if (isSearching) {
                         CharacterList(
                             characters = charactersFiltered,
                             animeBanner = null,
                             goToCharacterDetail = goToCharacterDetail
                         )
                     } else {
-                        Text(
-                            text = stringResource(R.string.HomeScreen_Item_Title_Dbz),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Left,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
+                        Column {
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        if(stateCharacter.isLoadingDbz || stateAnime.isLoadingDbz ){
-                            SectionLoading(
-                                iterations = LottieConstants.IterateForever
-                            )
-                        } else {
-
-                            CharacterList(
+                            AnimeSection(
+                                title = stringResource(R.string.HomeScreen_Item_Title_Dbz),
+                                isLoading = stateCharacter.isLoadingDbz || stateAnime.isLoadingDbz,
                                 characters = charactersDbz,
                                 animeBanner = animeDbz,
                                 goToCharacterDetail = goToCharacterDetail
                             )
 
-                        }
-
-                        Spacer(modifier = Modifier.height(40.dp))
-
-
-                        Text(
-                            text = stringResource(R.string.HomeScreen_Item_Title_Jba),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Left,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        if(stateCharacter.isLoadingJba || stateAnime.isLoadingJba ){
-                            SectionLoading(
-                                iterations = LottieConstants.IterateForever
-                            )
-                        } else {
-
-                            CharacterList(
+                            AnimeSection(
+                                title = stringResource(R.string.HomeScreen_Item_Title_Jba),
+                                isLoading = stateCharacter.isLoadingJba || stateAnime.isLoadingJba,
                                 characters = charactersJba,
                                 animeBanner = animeJba,
                                 goToCharacterDetail = goToCharacterDetail
                             )
 
-                        }
-
-                        Spacer(modifier = Modifier.height(40.dp))
-
-                        Text(
-                            text = stringResource(R.string.HomeScreen_Item_Title_Aot),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Left,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        if(stateCharacter.isLoadingAot || stateAnime.isLoadingAot ){
-                            SectionLoading(
-                                iterations = LottieConstants.IterateForever
-                            )
-                        } else {
-
-                            CharacterList(
+                            AnimeSection(
+                                title = stringResource(R.string.HomeScreen_Item_Title_Aot),
+                                isLoading = stateCharacter.isLoadingAot || stateAnime.isLoadingAot,
                                 characters = charactersAot,
                                 animeBanner = animeAot,
                                 goToCharacterDetail = goToCharacterDetail
                             )
-
                         }
-
-
-                        Spacer(modifier = Modifier.height(8.dp))
 
                     }
                 }
-
-
             }
-
+        }
     }
-
 }
