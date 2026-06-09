@@ -195,14 +195,14 @@ Cada nueva funcionalidad se desarrolla en una rama independiente y posteriorment
 
 ### Fase 4 – Optimización
 
-* [ ] Refactorización de código
-* [ ] Mejoras visuales
+* [x] Refactorización de código
+* [x] Mejoras visuales
 
 ### Fase 5 – Lanzamiento
 
-* [ ] Versión Beta
-* [ ] Release Candidate
-* [ ] Versión 1.0.0
+* [x] Versión Beta
+* [x] Release Candidate
+* [x] Versión 1.0.0
 
 ---
 
