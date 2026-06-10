@@ -2,9 +2,9 @@
 
 Charapedia es una aplicación Android enfocada en la exploración y descubrimiento de personajes de algunas series de anime mediante el consumo de la API pública de Jikan. El proyecto está siendo desarrollado utilizando tecnologías modernas de Android y siguiendo buenas prácticas de arquitectura, diseño de interfaces y desarrollo de software.
 
-> ⚠️ **Estado del Proyecto: En Desarrollo Activo**
+> ⚠️ **Estado del Proyecto: Terminado**
 >
-> Este proyecto aún se encuentra en fase de desarrollo y no debe considerarse una versión final.
+> Este proyecto ha culminado, cumpliendo con todas las fases previstas. Más sin embargo, se aceptan con mucho gusto cualquier tipo de observación o recomendación
 
 ---
 
@@ -22,13 +22,9 @@ Charapedia es una aplicación Android enfocada en la exploración y descubrimien
 * Consumo de servicios REST mediante Retrofit.
 * Soporte offline.
 * Persistencia local con Room.
-
-### Funcionalidades Planeadas
-
 * Búsqueda avanzada de personajes.
 * Configuración de preferencias de usuario.
 * Mejoras visuales y animaciones avanzadas.
-* Integración con nuevas fuentes de información.
 
 ---
 
@@ -96,7 +92,7 @@ app
 ### Persistencia de Datos
 
 * Room Database
-* DataStore *(planificado)*
+* DataStore
 
 ### Carga de Imágenes
 
@@ -208,12 +204,44 @@ Cada nueva funcionalidad se desarrolla en una rama independiente y posteriorment
 
 ## 📸 Capturas de Pantalla
 
-Las capturas serán agregadas a medida que el proyecto avance.
+### Home: 
 
-```text
-docs/
-└── screenshots/
-```
+Pantalla principal que muestra los animes junto a sus personajes, con acceso a búsqueda y configuraciones de la aplicación.
+
+
+<img width="350" height="600" alt="HomeScreen" src="https://github.com/user-attachments/assets/27750e0e-fe52-433e-aca0-a274aabbd13e" />
+
+
+---
+
+### Search: 
+
+Pantalla de búsqueda que permite localizar personajes mediante su nombre, facilitando un acceso rápido a resultados relevantes.
+
+
+<img width="350" height="600" alt="SearchScreen" src="https://github.com/user-attachments/assets/8d492dff-821c-4abd-82de-1e16f614de3b" />
+
+
+---
+
+### Character Detail: 
+
+Pantalla de detalle que muestra la información completa de cada personaje, incluyendo descripción, imagen y características destacadas.
+
+
+<img width="350" height="600" alt="CharacterDetail" src="https://github.com/user-attachments/assets/c7ba8302-1a1b-43f7-b53e-ff63ba8bf13c" />
+
+
+---
+
+
+### Settings: 
+
+Pantalla de configuraciones que permite personalizar la aplicación.
+
+
+<img width="350" height="600" alt="PreferencesScreen" src="https://github.com/user-attachments/assets/155724f6-b349-44f6-bbfe-8da3f7be4796" />
+
 
 ---
 
